@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROCK PULSE // 2026 亚洲摇滚全维度档案馆</title>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Montserrat:wght@400;700;900&family=Noto+Serif+SC:wght@400;700&family=Courier+Prime&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg: #030303; --accent: #FF0033; --text: #ffffff; --serif: 'Noto Serif SC', serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg); color: var(--text); font-family: 'Montserrat', sans-serif; overflow-x: hidden; line-height: 2.2; }
+        .noise { position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); opacity: 0.04; pointer-events: none; z-index: 10001; }
+        
+        #splash { position: fixed; inset: 0; background: #000; z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 1.2s; }
+        #splash.hide { transform: translateY(-100%); visibility: hidden; }
+        .enter-btn { background: none; border: 1px solid #333; color: #888; padding: 20px 60px; font-family: 'Oswald'; cursor: pointer; letter-spacing: 12px; font-size: 0.9rem; text-transform: uppercase; transition: 0.4s; }
+        .enter-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+        .system-bar { position: fixed; top: 30px; right: 30px; z-index: 9999; display: none; background: rgba(0,0,0,0.85); padding: 12px 25px; border: 1px solid #222; align-items: center; gap: 20px; backdrop-filter: blur(15px); }
+        .system-bar span { font-family: 'Courier Prime'; font-size: 0.65rem; color: #666; letter-spacing: 2px; }
+
+        #main { height: 100vh; overflow-y: auto; scroll-behavior: smooth; opacity: 0; transition: 2s; }
+        #main.show { opacity: 1; }
+        
+        section { padding: 180px 12%; border-bottom: 1px solid #111; position: relative; }
+        .tag { font-family: 'Oswald'; color: var(--accent); font-size: 0.75rem; letter-spacing: 10px; margin-bottom: 50px; display: block; opacity: 0.8; }
+        .title { font-family: 'Oswald'; font-size: clamp(3rem, 7vw, 7rem); line-height: 0.9; margin-bottom: 60px; text-transform: uppercase; letter-spacing: -1px; }
+        .content-text { max-width: 1000px; font-family: var(--serif); color: #aaa; font-size: 1.1rem; line-height: 2.6; margin-bottom: 40px; text-align: justify; }
+        .content-text b { color: #fff; font-weight: 700; }
+
+        .matrix-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 50px; }
+        .m-btn { background: #070707; border: 1px solid #111; padding: 80px 20px; cursor: pointer; transition: 0.5s; text-align: center; }
+        .m-btn:hover { border-color: var(--accent); background: #0a0a0a; transform: translateY(-5px); }
+        .m-btn span { color: #444; font-family: 'Courier Prime'; font-size: 0.65rem; letter-spacing: 4px; display: block; margin-bottom: 10px; }
+        .m-btn h4 { font-family: 'Oswald'; font-size: 1.8rem; }
+
+        .overlay { position: fixed; inset: 0; background: rgba(3,3,3,0.99); z-index: 10005; display: none; padding: 120px 15%; overflow-y: auto; backdrop-filter: blur(20px); }
+        .close-btn { position: fixed; top: 40px; right: 10%; font-family: 'Oswald'; color: #444; cursor: pointer; font-size: 1.2rem; }
+
+        .curators { background: #000; padding: 150px 12%; display: grid; grid-template-columns: 1fr 1fr; gap: 100px; border-top: 1px solid #222; }
+        .curator-card .origin { color: var(--accent); font-family: 'Oswald'; letter-spacing: 6px; font-size: 0.8rem; margin-bottom: 25px; display: block; }
+        .curator-card h3 { font-family: 'Oswald'; font-size: 3.5rem; margin-bottom: 15px; }
+        .curator-card p { font-size: 0.95rem; color: #666; font-family: var(--serif); line-height: 2.2; }
+
+        footer { padding: 80px 12%; color: #222; font-size: 0.65rem; text-align: center; font-family: 'Courier Prime'; border-top: 1px solid #080808; }
+    </style>
+</head>
+<body>
+
+    <div class="noise"></div>
+
+    <div id="splash">
+        <h1 style="font-family:'Oswald'; font-size:4vw; letter-spacing:30px; margin-bottom:40px; font-weight:900;">ROCK PULSE</h1>
+        <button class="enter-btn" onclick="init()">Enter The Archive</button>
+    </div>
+
+    <div class="system-bar" id="ui">
+        <span id="now-playing">AMBIENT MODE: LOW GAIN (-12dB)</span>
+        <button onclick="toggleAudio()" id="p-btn" style="background:none; border:1px solid #222; color:#555; padding:5px 15px; cursor:pointer; font-family:'Oswald'; font-size: 0.7rem;">PAUSE</button>
+    </div>
+    
+    <audio id="main-audio" loop><source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-17.mp3" type="audio/mpeg"></audio>
+
+    <div id="main">
+        <section>
+            <span class="tag">01 // THE MANIFESTO / 核心宣言</span>
+            <h1 class="title">COLLECTIVE<br>RESONANCE</h1>
+            <div class="content-text">
+                摇滚乐从不只是声音的震荡，它是关于<b>“拒绝沉默”</b>的生理印记。2026年，当算法试图将所有的音乐磨平成完美的几何图形，这座档案馆致力于打捞那些不完美的、带有铁锈味的模拟信号。我们记录那些被遗忘的磁带底噪、现场的尖叫、以及在电力不稳时产生的失真电路。这不仅仅是回顾，这是一场针对<b>声音主权</b>的数字营救。我们深信，只有那些未经修饰的频率，才能在时间的腐蚀下保留人类灵魂最真实的体温。
+            </div>
+        </section>
+
+        <section style="background: #050505;">
+            <span class="tag">02 // SONIC CLIMAX / 灵魂切片</span>
+            <h2 class="title">金曲高潮</h2>
+            <div class="content-text">
+                每一段伟大的旋律都有一个<b>“爆发点”</b>，那是乐手的情绪与器材极限重合的瞬间。通过高精度数字扫描，我们提取了亚洲摇滚史中最具破坏力的几秒钟。这些片段在 2.5kHz 到 4kHz 的频段表现出极强的共振，那是人声中攻击性与情感并存的领域。
+            </div>
+            <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                <button onclick="playClimax('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3', '一无所有', 45, this)" class="enter-btn" style="padding: 15px 30px; font-size: 0.7rem; letter-spacing: 5px;">CUI JIAN (1986)</button>
+                <button onclick="playClimax('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3', '海阔天空', 110, this)" class="enter-btn" style="padding: 15px 30px; font-size: 0.7rem; letter-spacing: 5px;">BEYOND (1993)</button>
+                <button onclick="playClimax('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-15.mp3', '杀死那个石家庄人', 185, this)" class="enter-btn" style="padding: 15px 30px; font-size: 0.7rem; letter-spacing: 5px;">WANNENG (2010)</button>
+            </div>
+        </section>
+
+        <section style="background: #080808;">
+            <span class="tag">03 // HALL OF HEROES / 传奇人物志</span>
+            <h2 class="title">名人堂</h2>
+            <div class="content-text">
+                这些名字并非仅仅代表个人，他们是<b>时代痛感的接收器</b>。从北京的荒原到缅甸的季风雨林，从香港的霓虹到曼谷的巷弄，他们用不同的语种完成了同一种抵抗。
+            </div>
+            <div class="matrix-grid">
+                <div class="m-btn" onclick="openBio('cuijian')"><span>ANCHOR</span><h4>崔健</h4></div>
+                <div class="m-btn" onclick="openBio('layphyu')"><span>SPIRIT</span><h4>Lay Phyu</h4></div>
+                <div class="m-btn" onclick="openBio('beyond')"><span>BEACON</span><h4>黄家驹</h4></div>
+                <div class="m-btn" onclick="openBio('wuneng')"><span>POET</span><h4>姬赓</h4></div>
+                <div class="m-btn" onclick="openBio('douwei')"><span>ALCHEMIST</span><h4>窦唯</h4></div>
+                <div class="m-btn" onclick="openBio('lek')"><span>VOICE</span><h4>Lek Carabao</h4></div>
+            </div>
+        </section>
+
+        <section>
+            <span class="tag">04 // SONIC GEOGRAPHY / 声音地理学</span>
+            <h2 class="title" style="font-size: 3rem;">地理与失真</h2>
+            <div class="content-text">
+                <b>环境决定频率。</b>北京的干燥寒冬赋予了早期中国摇滚一种<b>“干裂”的失真质感</b>，因为在低湿度环境下，电子管的冷却效率与电磁干扰呈现出独特的线性分布。而在东南亚，如仰光和曼谷，长期的湿热使得录音磁带极易产生微观霉变，这种物理损耗在重放时产生了一种带有<b>“粘稠感”的低频补偿</b>。这种由于物理环境与老旧器材碰撞出的音色，构成了亚洲摇滚独特的地理版图，任何数字建模都无法完全模拟这种受物理规律支配的随机性。
+            </div>
+        </section>
+
+        <section style="background: #050505;">
+            <span class="tag">05 // CHRONOLOGY / 亚洲摇滚编年史</span>
+            <h2 class="title" style="font-size: 3rem;">线性记忆</h2>
+            <div class="content-text">
+                <b>1986年：</b>北京工人体育馆，《一无所有》宣告了一个时代的觉醒。<b>1990年：</b>缅甸Iron Cross乐队成立，在极端的资讯封锁中，他们靠着拼凑的乐器吼出了季风带的金属回响。<b>1994年：</b>魔岩三杰在香港红磡展现了东方韵律与实验主义的融合巅峰。<b>2005年：</b>曼谷地下音乐节爆发，泰国独立音乐开始在蓝调中融入本土社会议题。<b>2026年：</b>Rock Pulse 计划正式启动，旨在抢救这些正在消磁的物理记忆，将模拟信号转化为永恒的数字波形。
+            </div>
+        </section>
+
+        <section>
+            <span class="tag">06 // HARDWARE ANALYSIS / 电路中的灵魂</span>
+            <h2 class="title" style="font-size: 3rem;">硬件考古</h2>
+            <div class="content-text">
+                档案馆对上世纪 80-90 年代亚洲摇滚使用的核心设备进行了<b>电路级仿真</b>。我们发现，当时的国产“英雄”牌音箱在过载时会产生一种非比寻常的奇次谐波，这赋予了吉他音色一种如同人声嘶吼般的悲壮感。同时，日本生产的早期单块效果器在应对东南亚不稳定的电压时，会产生奇妙的<b>“限幅失真”</b>，这种由电力不足导致的动态坍塌，反倒成了那个时代音乐中最具生命力的部分。
+            </div>
+        </section>
+
+        <section style="background: #080808;">
+            <span class="tag">07 // LYRIC LABORATORY / 文本实验室</span>
+            <h2 class="title" style="font-size: 3rem;">语词的重量</h2>
+            <div class="content-text">
+                我们对五万余首作品进行了<b>语义网络挖掘</b>。研究发现：80 年代关键词集中在“寻找、北方、呐喊”，体现了宏大叙事下的自我定位；90 年代转向“孤独、阳光、幻想”，映射了理想主义与现实撞击后的余温；进入 21 世纪，关键词变为“大厦、雾霾、药、沉默”，摇滚乐开始进入对后工业时代阵痛的深层反思。文字的变化，正是一部不动声色的社会人类学现场实录。
+            </div>
+        </section>
+
+        <section>
+            <span class="tag">08 // VISUAL ARCHIVE / 视觉采样</span>
+            <h2 class="title" style="font-size: 3rem;">颗粒感记忆</h2>
+            <div class="content-text">
+                档案馆修复了大量由私人摄影师捐赠的<b>胶片原卷</b>。这些图像中充满了高感光度带来的粗糙颗粒和失焦的动态。我们不仅保留了视觉图像，还通过算法分析了照片的光感色调，并将其转化为对应的<b>环境粉红噪音</b>。当你注视那些模糊的现场瞬间时，耳边响起的是那个瞬间最真实的声音底色——那是空气振动与人群体温交织出的历史余响。
+            </div>
+        </section>
+
+        <section style="background: #050505;">
+            <span class="tag">09 // ORAL HISTORY / 口述历史</span>
+            <h2 class="title" style="font-size: 3rem;">证言</h2>
+            <div class="content-text">
+                “我们那时候为了弄到一把正牌吉他，要在黑市上攒三年的钱。”一位来自 90 年代仰光的吉他手在音频中记录道。<b>口述历史板块</b>保留了不仅是巨星的证言，更多的是那些在无名酒吧、在限电的车库里弹了一辈子的铺路石。这些细碎的、带有各地口音的声音编织成了摇滚乐最真实的血肉。这种分布式的记忆库，确保了摇滚火种即便在数字极权时代也无法被熄灭。
+            </div>
+        </section>
+
+        <section>
+            <span class="tag">10 // FREQUENCY TEST / 频率分析</span>
+            <div style="height: 120px; display: flex; align-items: flex-end; gap: 4px;" id="visualizer"></div>
+            <div class="content-text" style="margin-top: 50px;">
+                真正的摇滚乐含有大量 <b>15kHz 以上的高频空气感</b>。在现代流行乐的压缩算法中，这些频段通常会被牺牲以节省带宽。但本档案馆坚持 24bit/192kHz 的无损采样。当你看到上方频谱在跳动时，那正是失真电路在对你的知觉进行某种程度的数字按摩。那是对“干净、完美、平庸”的拒绝。
+            </div>
+        </section>
+
+        <section style="background: #080808;">
+            <span class="tag">11 // SCENE SNAPSHOTS / 声场快照</span>
+            <h2 class="title" style="font-size: 3rem;">瞬间重构</h2>
+            <div class="content-text">
+                利用<b>HRTF空间音频技术</b>，我们重建了数个历史性瞬间：1988年马克西姆餐厅的西装与皮衣混杂的现场、2005年仰光地下车库在发电机轰鸣声中的合奏。这些场景不仅仅是录音，它们包含了墙壁的材质反射、空间的温湿度参数。闭上眼，你将瞬间进入那个充满了汗水、香烟和木头共振的现场，感受那个时代的触感。
+            </div>
+        </section>
+
+        <section>
+            <span class="tag">12 // HIDDEN RECORDS / 边缘之声</span>
+            <h2 class="title" style="font-size: 3rem;">隐藏记录</h2>
+            <div class="content-text">
+                有些声音从未在电台响起。我们打捞了那些<b>由于技术或审查原因被抹去的磁带</b>、未完成的 Demo 残片、以及在边缘游走的现场录音。这些“废弃物”才是摇滚乐最原始、最未经加工的基因。它们记录了创作者在极端压力之下最真实的肌肉反应。这些碎片被加密存储，作为人类感性在极端环境下最后的避难所。
+            </div>
+        </section>
+
+        <section style="background: #050505;">
+            <span class="tag">13 // INDUSTRIAL BLUEPRINT / 模拟重生</span>
+            <h2 class="title" style="font-size: 3rem;">模拟灵魂</h2>
+            <div class="content-text">
+                我们正在开发名为<b>“模拟灵魂”</b>的数字插件。它能自动分析一段现代数字音轨，并为其注入特定年份的硬件特征——比如 1980 年代国产晶体管的温差漂移，或者 1990 年代磁头磨损导致的颤动。这是我们将摇滚文明“固态化”的最终尝试。我们要让未来的听众明白，声音的伟大往往源于它的不精确。
+            </div>
+        </section>
+
+        <section>
+            <span class="tag">14 // GLOBAL RESONANCE / 全球共振</span>
+            <h2 class="title" style="font-size: 3rem;">脉搏同步</h2>
+            <div class="content-text">
+                目前，本档案馆已链接全球 20 多个地下节点。来自首尔、河内、北京、曼谷的贡献者们正实时上传着他们的私人收藏。这不是一个静态的陈列室，而是一个<b>不断扩容的、活着的文明样本</b>。每一个点击、每一秒的聆听，都是在为这台巨大的历史发电机注入能量，确保这段文明不被算法的虚无所吞噬。
+            </div>
+        </section>
+
+        <section style="background: #080808;">
+            <span class="tag">15 // THE ULTIMATE MISSION / 终极使命</span>
+            <h2 class="title" style="font-size: 2.5rem;">消失的母带：<br>最后的十分钟</h2>
+            <div class="content-text">
+                磁带的寿命只有 50 年。二十世纪那些最伟大的声音记录正面临集体消磁。由于物理层面的氧化脱落，无数珍贵的瞬间正在变成粉末。我们的使命就是在这场漫长的退潮中，赶在信号归于虚无之前，进行跨维度的数字化救赎。<b>我们不仅是在存留历史，我们是在救火。</b>这是我们对摇滚文明最后的致敬。
+            </div>
+        </section>
+
+        <section class="curators">
+            <div class="curator-card">
+                <span class="origin">FROM MYANMAR / 缅甸</span>
+                <h3>杨本发</h3>
+                <p>档案馆联合创始人，文化考古专家。专注于亚洲地下场景的田野调查，他在仰光的废墟中打捞原始母带，通过文字与逻辑重构亚洲摇滚的地下版图。他相信，每一个音符背后都是一段未被书写的民族志。</p>
+            </div>
+            <div class="curator-card">
+                <span class="origin">FROM THAILAND / 泰国</span>
+                <h3>周立志</h3>
+                <p>档案馆技术主脑，音频工程师。专注于模拟电路的数字孪生研究。他在曼谷的实验室中还原了上世纪特有的失真动态，为冰冷的数字格式注入了有温度的、带有硬件指纹的模拟灵魂。</p>
+            </div>
+        </section>
+
+        <footer>
+            ROCK PULSE ARCHIVE © 2026 // NOISE IS THE ONLY TRUTH // ALL RIGHTS RESONATED
+        </footer>
+    </div>
+
+    <div id="overlay" class="overlay">
+        <span class="close-btn" onclick="closeBio()">CLOSE [X]</span>
+        <div id="bio-content"></div>
+    </div>
+
+    <script>
+        const mainAudio = document.getElementById('main-audio');
+        const nowPlayingText = document.getElementById('now-playing');
+        mainAudio.volume = 0.1;
+
+        function init() { 
+            document.getElementById('splash').classList.add('hide'); 
+            document.getElementById('main').classList.add('show'); 
+            document.getElementById('ui').style.display='flex'; 
+            document.body.style.overflow='auto';
+            mainAudio.play();
+            makeVis();
+        }
+
+        function toggleAudio() { 
+            if(mainAudio.paused) { mainAudio.play(); document.getElementById('p-btn').innerText='PAUSE'; }
+            else { mainAudio.pause(); document.getElementById('p-btn').innerText='PLAY'; }
+        }
+
+        function playClimax(url, name, startTime, el) {
+            mainAudio.src = url;
+            mainAudio.volume = 0.5;
+            mainAudio.currentTime = startTime;
+            mainAudio.play();
+            nowPlayingText.innerText = "CLIMAX SAMPLING: " + name;
+        }
+
+        function makeVis() {
+            const v = document.getElementById('visualizer');
+            for(let i=0; i<60; i++) {
+                const b = document.createElement('div');
+                b.style.flex = '1'; b.style.background = '#FF0033'; b.style.transition = '0.1s'; b.style.height = '2px';
+                v.appendChild(b);
+            }
+            setInterval(() => {
+                if(!mainAudio.paused) {
+                    v.childNodes.forEach(b => { if(b.style) b.style.height = Math.random() * 120 + 'px'; });
+                }
+            }, 100);
+        }
+
+        const bios = {
+            cuijian: `
+                <h1 style="font-family:'Oswald'; color:#FF0033; font-size:4.5rem; line-height:1;">崔健</h1>
+                <h3 style="color:#555; margin-bottom:40px; font-family:'Courier Prime';">THE ANCHOR OF MODERNITY</h3>
+                <p>1986年，中国。崔健在聚光灯下吼出的第一声，不仅宣告了摇滚乐的诞生，更宣告了个人意识在东方的觉醒。他的音乐融合了西北民歌的厚重与放克、雷鬼的现代节奏，这种嫁接在当时具有极强的颠覆性。他证明了摇滚不仅是进口货，它可以长在红色的泥土里。</p>
+                <div style="background:#0a0a0a; padding:40px; border-left:4px solid #FF0033; margin:40px 0;">
+                    <h4 style="color:#FF0033; font-family:'Oswald';">声学分析：</h4>
+                    <p style="color:#888;">在《一无所有》中，他的声带在4.2kHz处产生极强的自然失真，这种频段通常与“警报、呼喊”等生存本能挂钩，这也是为什么这首歌能瞬间穿透时代屏障。 </p>
+                </div>
+                <p>从《解决》中的社会写实到《飞狗》中的超现实主义，崔健始终是那个拿着手术刀的人，精准地解构着每一代人的心理症候。他是这座档案馆中不可逾越的锚点。</p>
+            `,
+            layphyu: `
+                <h1 style="font-family:'Oswald'; color:#FF0033; font-size:4.5rem; line-height:1;">LAY PHYU</h1>
+                <h3 style="color:#555; margin-bottom:40px; font-family:'Courier Prime';">THE SPIRIT OF YANGON</h3>
+                <p>作为缅甸摇滚的至尊，Lay Phyu 带领的 Iron Cross 乐队是东南亚最强韧的音乐实体。在政治高压与电力极度匮乏的年代，他们靠着秘密运入的国外磁带和自制音箱，在仰光的季风雨林中吼出了最纯正的重金属。他的存在就是对“音乐无关国界”最好的注脚。</p>
+                <p>在档案馆修复的母带中，我们可以清晰地听到他高音采样中的那种“磁带饱和”。那是老旧设备在超负荷运转时产生的温暖杂音。这种音色记录了在极其严苛的物理环境下，人类精神是如何野蛮生长的。他是东南亚摇滚史上最耀眼的图腾。</p>
+            `,
+            beyond: `
+                <h1 style="font-family:'Oswald'; color:#FF0033; font-size:4.5rem; line-height:1;">黄家驹</h1>
+                <h3 style="color:#555; margin-bottom:40px; font-family:'Courier Prime';">ETERNAL LIGHT OF FREEDOM</h3>
+                <p>黄家驹的伟大在于他将摇滚从狭隘的宣泄中解放出来，赋予了它关乎人类命运、种族平等与世界和平的广阔格局。Beyond 的作品不仅代表了香港流行摇滚的巅峰，更在整个亚洲乃至非洲产生了深远的共鸣。他的旋律天才曾一度让人忽视了他作为严肃摇滚乐手的实验精神。</p>
+                <p>档案馆收录了他在1991年红磡现场的一段吉他即兴。在那段推弦中，可以听到极其强烈的生命张力。他使用的 Fender 吉他在他的拨片下，产生出一种近乎“哭泣”的音色。修复团队利用 AI 神经网络还原了他吉他音色中所有的泛音细节，那是人类感性的巅峰。</p>
+            `,
+            wuneng: `
+                <h1 style="font-family:'Oswald'; color:#FF0033; font-size:4.5rem; line-height:1;">姬赓</h1>
+                <h3 style="color:#555; margin-bottom:40px; font-family:'Courier Prime';">THE INDUSTRIAL POET</h3>
+                <p>作为万能青年旅店的词作者，他是当之无愧的文字炼金术士。他将石家庄这座“药都”的失意、阵痛与迷茫，编织成了一张巨大且沉重的文本网络。他的歌词不是诗，是写给这个时代的死亡诊断书。在嘈杂的乐器轰鸣中，他用最冷静的文字解构了后工业文明的虚妄。</p>
+                <p>档案馆分析了其作品中标志性的小号编排：那是从现实泥潭中强行拔起的英雄主义。他在歌词中对社会断层的捕捉，证明了摇滚乐在文字深度上可以达到的极高境界。他是档案馆中关于“土地与诗学”最深刻的案例研究。</p>
+            `,
+            douwei: `
+                <h1 style="font-family:'Oswald'; color:#FF0033; font-size:4.5rem; line-height:1;">窦唯</h1>
+                <h3 style="color:#555; margin-bottom:40px; font-family:'Courier Prime';">THE TRANSCENDENT ALCHEMIST</h3>
+                <p>从红磡巅峰时期的华丽颓废，到后期归于沉寂的环境音乐实验，窦唯完成了从“人声”到“声音”的惊人飞跃。他证明了摇滚的终极形式可以是宁静。他主动放逐了语言，让位给自然的呼吸、雨声和随机的采样，这种去偶像化的路径是亚洲艺术家最高级的自觉。</p>
+                <p>我们收录了他近年的大量即兴采样。这些档案中，背景的雨声、人群的低语、甚至是空气的流动声，都是作品不可分割的一部分。他展示了声音如何从一种外向的愤怒转化为一种永恒的、足以让时间停止的宁静。</p>
+            `,
+            lek: `
+                <h1 style="font-family:'Oswald'; color:#FF0033; font-size:4.5rem; line-height:1;">LEK CARABAO</h1>
+                <h3 style="color:#555; margin-bottom:40px; font-family:'Courier Prime';">THE THAI REBELLION</h3>
+                <p>作为泰国摇滚的脊梁，Lek Carabao 将泰国民间音乐（Mor Lam）的辛辣韵律与硬摇滚的重型结构完美嫁接。他的作品始终注视着曼谷街头的底层劳动者。他的吉他推弦中蕴含着曼谷热浪的温热感。他不仅是一个音乐人，他是泰国社会良知的代言人。</p>
+                <p>档案馆收录了他在曼谷地下室的一次即兴演出录音。修复过程中，我们特意保留了现场那种湿润的声场反射。Lek 证明了摇滚乐可以完全扎根于本土泥土，并开出最强韧的生命之花。他是泰国精神在声音层面的最高代表。</p>
+            `
+        };
+
+        function openBio(k) { 
+            document.getElementById('bio-content').innerHTML = bios[k] || "<h2>档案载入中...</h2>"; 
+            document.getElementById('overlay').style.display='block'; 
+            document.body.style.overflow='hidden';
+        }
+        function closeBio() { document.getElementById('overlay').style.display='none'; document.body.style.overflow='auto'; }
+    </script>
+</body>
+</html>
+
+
